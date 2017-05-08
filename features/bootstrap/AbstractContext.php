@@ -3,7 +3,7 @@
 namespace Feature;
 
 use Behat\MinkExtension\Context\MinkContext;
-use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\DBAL\Connection;
 
 /**
  * @author Jefersson Nathan <malukenho@phpse.net>
@@ -11,23 +11,23 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 class AbstractContext extends MinkContext
 {
     /**
-     * @var DocumentManager
+     * @var Connection
      */
-    protected $documentManager;
+    protected $connection;
 
     /**
-     * @return DocumentManager
+     * @return Connection
      */
-    public function getDocumentManager()
+    public function connection(): Connection
     {
-        return $this->documentManager;
+        return $this->connection;
     }
 
     /**
-     * @param DocumentManager $documentManager
+     * @param Connection $connection
      */
-    public function setDocumentManager(DocumentManager $documentManager)
+    public function setConnection(Connection $connection): void
     {
-        $this->documentManager = $documentManager;
+        $this->connection = $connection;
     }
 }

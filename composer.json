@@ -16,7 +16,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Feature\\": "features/bootstrap"
+      "Feature\\": "features/bootstrap",
+      "ConticketTest\\": "tests/"
     },
     "classmap": [
       "features/bootstrap"

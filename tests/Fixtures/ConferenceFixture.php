@@ -18,16 +18,23 @@
 
 declare(strict_types=1);
 
-use Conticket\Conference\Domain\Repository\ConferenceRepositoryInterface;
-use Conticket\Conference\Domain\Repository\FetchAllConferencesRepositoryInterface;
-use Conticket\Conference\Factory\Repository\ConferenceRepositoryFactory;
-use Conticket\Conference\Factory\Repository\FetchAllConferencesRepositoryFactory;
+namespace ConticketTest\Fixtures;
 
-return (function (): array {
-    return [
-        'factories' => [
-            ConferenceRepositoryInterface::class => ConferenceRepositoryFactory::class,
-            FetchAllConferencesRepositoryInterface::class => FetchAllConferencesRepositoryFactory::class,
-        ],
-    ];
-})();
+use Conticket\Conference\Domain\ConferenceId;
+use Doctrine\DBAL\Connection;
+
+final class ConferenceFixture
+{
+    public function load(Connection $connection): void
+    {
+        // @todo use other fixture to create/drop table
+        $connection->query('DROP TABLE IF EXISTS conferences');
+        $connection->query('CREATE TABLE conferences (
+          id VARCHAR(36) NOT NULL UNIQUE,
+          name VARCHAR(255) NOT NULL
+        )');
+
+        $connection->query('DELETE FROM conferences');
+        $connection->query('INSERT INTO conferences(id, name) VALUES ("'.(string) ConferenceId::new().'", "PHPeste")');
+    }
+}

@@ -18,16 +18,26 @@
 
 declare(strict_types=1);
 
-use Conticket\Conference\Domain\Repository\ConferenceRepositoryInterface;
-use Conticket\Conference\Domain\Repository\FetchAllConferencesRepositoryInterface;
-use Conticket\Conference\Factory\Repository\ConferenceRepositoryFactory;
-use Conticket\Conference\Factory\Repository\FetchAllConferencesRepositoryFactory;
+namespace Conticket\Conference\Factory\Middleware;
 
-return (function (): array {
-    return [
-        'factories' => [
-            ConferenceRepositoryInterface::class => ConferenceRepositoryFactory::class,
-            FetchAllConferencesRepositoryInterface::class => FetchAllConferencesRepositoryFactory::class,
-        ],
-    ];
-})();
+use Conticket\Conference\Domain\Repository\FetchAllConferencesRepositoryInterface;
+use Conticket\Conference\Infrastructure\Middleware\ListConferencesMiddleware;
+use Interop\Container\ContainerInterface;
+
+/**
+ * @author Jefersson Nathan <malukenho@phpse.net>
+ */
+final class ListConferencesMiddlewareFactory
+{
+    /**
+     * {@inheritDoc}
+     *
+     * @throws \Psr\Container\ContainerExceptionInterface
+     */
+    public function __invoke(ContainerInterface $container): ListConferencesMiddleware
+    {
+        return new ListConferencesMiddleware(
+            $container->get(FetchAllConferencesRepositoryInterface::class)
+        );
+    }
+}

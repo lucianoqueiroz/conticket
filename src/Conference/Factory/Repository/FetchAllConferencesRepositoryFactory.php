@@ -18,16 +18,19 @@
 
 declare(strict_types=1);
 
-use Conticket\Conference\Domain\Repository\ConferenceRepositoryInterface;
-use Conticket\Conference\Domain\Repository\FetchAllConferencesRepositoryInterface;
-use Conticket\Conference\Factory\Repository\ConferenceRepositoryFactory;
-use Conticket\Conference\Factory\Repository\FetchAllConferencesRepositoryFactory;
+namespace Conticket\Conference\Factory\Repository;
 
-return (function (): array {
-    return [
-        'factories' => [
-            ConferenceRepositoryInterface::class => ConferenceRepositoryFactory::class,
-            FetchAllConferencesRepositoryInterface::class => FetchAllConferencesRepositoryFactory::class,
-        ],
-    ];
-})();
+use Conticket\Conference\Infrastructure\Repository\FetchAllConferencesRepository;
+use Doctrine\DBAL\Connection;
+use Interop\Container\ContainerInterface;
+
+/**
+ * @author Jefersson Nathan <malukenho@phpse.net>
+ */
+final class FetchAllConferencesRepositoryFactory
+{
+    public function __invoke(ContainerInterface $container): FetchAllConferencesRepository
+    {
+        return new FetchAllConferencesRepository($container->get(Connection::class));
+    }
+}

@@ -18,16 +18,41 @@
 
 declare(strict_types=1);
 
-use Conticket\Conference\Domain\Repository\ConferenceRepositoryInterface;
-use Conticket\Conference\Domain\Repository\FetchAllConferencesRepositoryInterface;
-use Conticket\Conference\Factory\Repository\ConferenceRepositoryFactory;
-use Conticket\Conference\Factory\Repository\FetchAllConferencesRepositoryFactory;
+namespace Conticket\Conference\Infrastructure\Middleware;
 
-return (function (): array {
-    return [
-        'factories' => [
-            ConferenceRepositoryInterface::class => ConferenceRepositoryFactory::class,
-            FetchAllConferencesRepositoryInterface::class => FetchAllConferencesRepositoryFactory::class,
-        ],
-    ];
-})();
+use Conticket\Conference\Domain\Repository\FetchAllConferencesRepositoryInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Zend\Diactoros\Response\JsonResponse;
+use Zend\Stratigility\MiddlewareInterface;
+
+/**
+ * @author Jefersson Nathan <malukenho@phpse.net>
+ */
+final class ListConferencesMiddleware implements MiddlewareInterface
+{
+    const PATH = '/conferences';
+
+    /**
+     * @var FetchAllConferencesRepositoryInterface
+     */
+    private $repository;
+
+    /**
+     * @param FetchAllConferencesRepositoryInterface $repository
+     */
+    public function __construct(FetchAllConferencesRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function __invoke(Request $request, Response $response, callable $out = null)
+    {
+        return new JsonResponse($this->repository->fetchAll());
+    }
+}

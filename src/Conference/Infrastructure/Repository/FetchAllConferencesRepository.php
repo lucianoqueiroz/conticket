@@ -18,16 +18,37 @@
 
 declare(strict_types=1);
 
-use Conticket\Conference\Domain\Repository\ConferenceRepositoryInterface;
-use Conticket\Conference\Domain\Repository\FetchAllConferencesRepositoryInterface;
-use Conticket\Conference\Factory\Repository\ConferenceRepositoryFactory;
-use Conticket\Conference\Factory\Repository\FetchAllConferencesRepositoryFactory;
+namespace Conticket\Conference\Infrastructure\Repository;
 
-return (function (): array {
-    return [
-        'factories' => [
-            ConferenceRepositoryInterface::class => ConferenceRepositoryFactory::class,
-            FetchAllConferencesRepositoryInterface::class => FetchAllConferencesRepositoryFactory::class,
-        ],
-    ];
-})();
+use Conticket\Conference\Domain\Repository\FetchAllConferencesRepositoryInterface;
+use Doctrine\DBAL\Connection;
+
+/**
+ * @author Jefersson Nathan <malukenho@phpse.net>
+ */
+final class FetchAllConferencesRepository implements FetchAllConferencesRepositoryInterface
+{
+    /**
+     * @var Connection
+     */
+    private $connection;
+
+    public function __construct(Connection $connection)
+    {
+        $this->connection = $connection;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function fetchAll(): array
+    {
+        $queryBuilder = $this->connection->createQueryBuilder();
+
+        return $queryBuilder
+            ->select('*')
+            ->from('conferences')
+            ->execute()
+            ->fetchAll();
+    }
+}
